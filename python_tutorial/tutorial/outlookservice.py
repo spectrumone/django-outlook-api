@@ -7,7 +7,7 @@ outlook_api_endpoint = 'https://outlook.office.com/api/v2.0{0}'
 # Generic API Sending
 def make_api_call(method, url, token, payload = None, parameters = None):
     # Send these headers with all API calls
-    headers = { 'User-Agent' : 'python_tutorial/1.0',
+    headers = { 'User-Agent' : 'django-tutorial/1.0',
                 'Authorization' : 'Bearer {0}'.format(token),
                 'Accept' : 'application/json'}
 
@@ -20,7 +20,32 @@ def make_api_call(method, url, token, payload = None, parameters = None):
 
     headers.update(instrumentation)
 
-    response = None
+    response = None 
+
+    payload = {
+              "Subject": "Discuss the Calendar REST API",
+              "Body": {
+                "ContentType": "HTML",
+                "Content": "I think it will meet our requirements!"
+              },
+              "Start": {
+                  "DateTime": "2014-04-04T18:00:00",
+                  "TimeZone": "Pacific Standard Time"
+              },
+              "End": {
+                  "DateTime": "2014-04-04T19:00:00",
+                  "TimeZone": "Pacific Standard Time"
+              },
+              "Attendees": [
+                {
+                  "EmailAddress": {
+                    "Address": "janets@a830edad9050849NDA1.onmicrosoft.com",
+                    "Name": "Janet Schorr"
+                  },
+                  "Type": "Required"
+                }
+              ]
+            }
 
     if (method.upper() == 'GET'):
         response = requests.get(url, headers = headers, params = parameters)
@@ -72,6 +97,15 @@ def get_my_events(access_token):
         return r.json()
     else:
         return "{0}: {1}".format(r.status_code, r.text)
+
+def post_my_events(access_token):
+    post_events_url = outlook_api_endpoint.format('/Me/Events')
+    r = make_api_call('POST', post_events_url, access_token)
+    if (r.status_code == requests.codes.ok):
+        return r.json()
+    else:
+        return "{0}: {1}".format(r.status_code, r.text)
+
 
 
 def get_my_contacts(access_token):

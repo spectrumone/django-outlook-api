@@ -12,6 +12,7 @@ urlpatterns = patterns('',
     url(r'^mail/$', views.mail, name='mail'),
     # Events view ('/tutorial/events/')
     url(r'^events/$', views.events, name='events'),
+    url(r'^post-events/$', views.post_events, name='events'),
     # Contacts view ('/tutorial/contacts/')
     url(r'^contacts/$', views.contacts, name='contacts'),
 )

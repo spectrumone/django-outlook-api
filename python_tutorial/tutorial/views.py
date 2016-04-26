@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from tutorial.authhelper import get_signin_url, get_token_from_code, get_user_email_from_id_token
-from tutorial.outlookservice import get_my_events, get_my_messages, get_my_contacts
+from tutorial.outlookservice import get_my_events, get_my_messages, get_my_contacts, post_my_events
 # Create your views here.
 
 
@@ -34,6 +34,15 @@ def mail(request):
         return HttpResponse('Messages: {0}'.format(messages))
 
 
+def post_events(request):
+    access_token = request.session['access_token']
+    if not access_token:
+        return HttpResponseRedirect(reverse('tutorial:home'))
+    else:
+        post_event_results = post_my_events(access_token)
+        return HttpResponse('Messages: {0}'.format(post_event_results))
+
+
 def events(request):
     access_token = request.session['access_token']
     # If there is no token in the session, redirect to home
@@ -41,7 +50,8 @@ def events(request):
         return HttpResponseRedirect(reverse('tutorial:home'))
     else:
         events = get_my_events(access_token)
-        return HttpResponse('Events: {0}'.format(events))
+        context = { 'events': events['value'] }
+        return render(request, 'tutorial/events.html', context)
 
 
 def contacts(request):
